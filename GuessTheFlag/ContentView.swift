@@ -12,7 +12,12 @@ struct ContentView: View {
     @State private var correctAnswer = Int.random(in: 0...2)
     
     @State private var showingScore = false
+    @State private var showingReset = false
     @State private var scoreTitle = ""
+    @State private var scoreMessage = ""
+    @State private var score = 0
+    @State private var rounds = 0
+    let maxRounds = 8
     
     var body: some View {
         ZStack {
@@ -57,7 +62,7 @@ struct ContentView: View {
                 Spacer()
                 Spacer()
                 
-                Text("Score: ???")
+                Text("Score: \(score)")
                     .foregroundStyle(.white)
                     .font(.title.bold())
                 
@@ -68,15 +73,28 @@ struct ContentView: View {
         .alert(scoreTitle, isPresented: $showingScore) {
             Button("Continue", action: askQuestion)
         } message: {
-            Text("Your score is ???")
+            Text(scoreMessage)
+        }
+        .alert("Game over!", isPresented: $showingReset) {
+            Button("Start over", action: startOver)
+        } message: {
+            Text("You've completed \(maxRounds) rounds, your final score is \(score)/\(maxRounds).")
         }
     }
     
     func flagTapped(_ number: Int) {
+        // Clear out anything that was in scoreMessage
+        scoreMessage = ""
+        // Round count
+        rounds += 1
+        
         if number == correctAnswer {
-            scoreTitle = "Correct"
+            score += 1
+            scoreTitle = "Correct!"
+            scoreMessage = "Your score is now \(score)"
         } else {
-            scoreTitle = "Wrong"
+            scoreTitle = "Wrong!"
+            scoreMessage = "I'm sorry, that's the flag of \(countries[number]). Your score remains \(score)"
         }
         
         showingScore = true
@@ -85,6 +103,16 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        
+        //If we've completed maxRounds rounds, let's start over!
+        if(rounds >= maxRounds) {
+            showingReset = true
+        }
+    }
+    
+    func startOver() {
+        score = 0
+        //askQuestion()
     }
 }
 
