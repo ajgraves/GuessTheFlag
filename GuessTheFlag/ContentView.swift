@@ -29,6 +29,9 @@ struct ContentView: View {
     @State private var rounds = 0
     let maxRounds = 8
     
+    // For animations
+    @State private var selectedFlag = -1
+    
     var body: some View {
         ZStack {
             RadialGradient(stops: [
@@ -60,6 +63,11 @@ struct ContentView: View {
                         } label: {
                             FlagImage(country: countries[number])
                         }
+                        .opacity(selectedFlag >= 0 && selectedFlag != number ? 0.25 : 1)
+                        .scaleEffect(selectedFlag >= 0 && selectedFlag != number ? 0.5 : 1)
+                        .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0), axis: (x: 0, y: 1, z: 0))
+                        .animation(.default, value: selectedFlag)
+                        
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -91,6 +99,8 @@ struct ContentView: View {
     }
     
     func flagTapped(_ number: Int) {
+        // Selected flag number
+        selectedFlag = number
         // Clear out anything that was in scoreMessage
         scoreMessage = ""
         // Round count
@@ -111,6 +121,7 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        selectedFlag = -1
         
         //If we've completed maxRounds rounds, let's start over!
         if(rounds >= maxRounds) {
