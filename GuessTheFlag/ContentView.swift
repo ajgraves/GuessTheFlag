@@ -32,6 +32,21 @@ struct ContentView: View {
     // For animations
     @State private var selectedFlag = -1
     
+    // Accessibility
+    let labels = [
+        "Estonia": "Flag with three horzontal stripes. Top stripe blue, middle stripe black, bottom stripe white.",
+        "France": "Flag with three vertical stripes. Left stripe blue, middle stripe white, right stripe red.",
+        "Germany": "Flag with three horizontal stripes. Top stripe black, middle stripe red, bottom stripe gold.",
+        "Ireland": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe orange.",
+        "Italy": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe red.",
+        "Nigeria": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe green.",
+        "Poland": "Flag with two horizontal stripes. Top stripe white, buttom stripe red.",
+        "Spain": "Flag with three horizontal stripes. Top thin stripe red, middle thick stripe is gold with a crest on the left, bottom thin stripe red.",
+        "UK": "Flag with overlapping read and white crosses, both straight and diagonally, on a blue background.",
+        "Ukraine": "Flag with two horizontal stripes. Top stripe blue, bottom stripe yellow.",
+        "US": "Flag with many red and white stripes, with white stars on a blue background in the top-left corner."
+    ]
+    
     var body: some View {
         ZStack {
             RadialGradient(stops: [
@@ -63,11 +78,11 @@ struct ContentView: View {
                         } label: {
                             FlagImage(country: countries[number])
                         }
+                        .accessibilityLabel(labels[countries[number]])
                         .opacity(selectedFlag >= 0 && selectedFlag != number ? 0.25 : 1)
                         .scaleEffect(selectedFlag >= 0 && selectedFlag != number ? 0.5 : 1)
                         .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0), axis: (x: 0, y: 1, z: 0))
                         .animation(.default, value: selectedFlag)
-                        
                     }
                 }
                 .frame(maxWidth: .infinity)
